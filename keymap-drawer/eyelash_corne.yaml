@@ -10,7 +10,7 @@ layers:
   - {t: '$$mdi:menu-up$$', s: '$$mdi:mouse$$'}
   - Y
   - U
-  - '&i_printscreen'
+  - I
   - O
   - P
   - {t: '$$mdi:backspace$$', type: backspace}
