@@ -3,13 +3,12 @@
 
 #include <input/processors.dtsi>
 #include <zephyr/dt-bindings/input/input-event-codes.h>
-#include <behaviors.dtsi>
 #include <behaviors/runtime-sensor-rotate.dtsi>
+#include <behaviors.dtsi>
+#include <dt-bindings/zmk/backlight.h>
 #include <dt-bindings/zmk/bt.h>
 #include <dt-bindings/zmk/keys.h>
-#include <dt-bindings/zmk/outputs.h>
 #include <dt-bindings/zmk/pointing.h>
-#include <dt-bindings/zmk/rgb.h>
 
 &soft_off { hold-time-ms = <2000>; };
 
@@ -33,6 +32,7 @@
             compatible = "zmk,behavior-hold-tap";
             label = "HRM_LEFT";
             bindings = <&kp>, <&kp>;
+
             #binding-cells = <2>;
             flavor = "tap-preferred";
             tapping-term-ms = <250>;
@@ -46,6 +46,7 @@
             compatible = "zmk,behavior-hold-tap";
             label = "HRM_RIGHT";
             bindings = <&kp>, <&kp>;
+
             #binding-cells = <2>;
             flavor = "tap-preferred";
             tapping-term-ms = <250>;
@@ -53,6 +54,13 @@
             require-prior-idle-ms = <150>;
             hold-trigger-on-release;
             hold-trigger-key-positions = <0 1 2 3 4 5 6 13 14 15 16 17 18 19 20 21 28 29 30 31 32 33 34 35 42 43 44 45 46 47>;
+        };
+
+        p_printscreen: p_printscreen {
+            compatible = "zmk,behavior-tap-dance";
+            label = "P_PRINTSCREEN";
+            #binding-cells = <0>;
+            bindings = <&kp P>, <&kp PRINTSCREEN>;
         };
     };
 
@@ -80,22 +88,24 @@
         default_layer {
             display-name = "QWERTY";
             bindings = <
-&kp TAB       &kp Q  &kp W  &kp E      &kp R  &kp T                                &mmv MOVE_UP                     &kp Y        &kp U  &kp I      &kp O    &kp P     &kp BSPC
-&mt LALT ESC  &hrm_left LGUI A  &hrm_left LALT S  &hrm_left LCTRL D  &hrm_left LSHFT F  &kp G                 &mmv MOVE_LEFT  &mkp LCLK       &mmv MOVE_RIGHT  &kp H              &hrm_right RSHFT J  &hrm_right RCTRL K  &hrm_right RALT L  &hrm_right RGUI SEMI  &kp SQT
-&kp LSHFT     &kp Z  &kp X  &kp C      &kp V  &kp B  &kp C_MUTE                    &mmv MOVE_DOWN                   &kp N        &kp M  &kp COMMA  &kp DOT  &kp FSLH  &kp ENTER
-                             &kp RCTRL  &mo 1  &kp SPACE                                                             &lt 4 ENTER  &mo 2  &kp LGUI
+&kp TAB       &kp Q             &kp W             &kp E              &kp R              &kp T                                         &mmv MOVE_UP                     &kp Y        &kp U               &kp I               &kp O              &p_printscreen        &kp BSPC
+&mt LALT ESC  &hrm_left LGUI A  &hrm_left LALT S  &hrm_left LCTRL D  &hrm_left LSHFT F  &kp G                         &mmv MOVE_LEFT  &mkp LCLK       &mmv MOVE_RIGHT  &kp H        &hrm_right RSHFT J  &hrm_right RCTRL K  &hrm_right RALT L  &hrm_right RGUI SEMI  &kp SQT
+&kp LSHFT     &kp Z             &kp X             &kp C              &kp V              &kp B      &kp PRINTSCREEN                    &mmv MOVE_DOWN                   &kp N        &kp M               &kp COMMA           &kp DOT            &kp FSLH              &kp ENTER
+                                                  &kp RCTRL          &mo 1              &kp SPACE                                                                      &lt 4 ENTER  &mo 2               &kp LGUI
             >;
 
-            sensor-bindings = <&rsr_scrl &rsr_trans>;
+            sensor-bindings =
+                <&inc_dec_kp K_SCROLL_UP K_SCROLL_DOWN>,
+                <&rsr_trans>;
         };
 
         lower_layer {
             display-name = "NUMBER";
             bindings = <
-&kp GRAVE  &kp N1  &kp N2  &kp N3  &kp N4  &kp N5                                &mmv MOVE_UP                     &kp N6  &kp N7     &kp N8     &kp N9    &kp N0    &trans
-&kp DEL    &bt BT_CLR_ALL  &bt BT_SEL 0  &bt BT_SEL 1  &bt BT_SEL 2  &bt BT_SEL 3                &mmv MOVE_LEFT  &mkp LCLK       &mmv MOVE_RIGHT  &none            &kp MINUS        &kp EQUAL        &kp LBKT         &kp RBKT  &kp BSLH
-&trans     &rgb_ug RGB_OFF  &rgb_ug RGB_ON  &out OUT_USB  &out OUT_BLE  &rgb_ug RGB_EFF  &kp C_MUTE                   &mmv MOVE_DOWN                   &rgb_ug RGB_EFR  &rgb_ug RGB_SPI  &rgb_ug RGB_BRI  &rgb_ug RGB_BRD  &none     &none
-                           &trans  &trans  &trans                                                                  &trans  &trans     &trans
+&kp GRAVE  &kp N1        &kp N2        &kp N3        &kp N4  &kp N5                                &mmv MOVE_UP                     &kp N6  &kp N7     &kp N8     &kp N9    &kp N0    &trans
+&kp DEL    &trans        &trans        &trans        &trans  &trans                &mmv MOVE_LEFT  &mkp LCLK       &mmv MOVE_RIGHT  &none   &kp MINUS  &kp EQUAL  &kp LBKT  &kp RBKT  &kp BSLH
+&trans     &bt BT_SEL 0  &bt BT_SEL 1  &bt BT_SEL 2  &trans  &bl BL_TOG  &trans                    &mmv MOVE_DOWN                   &trans  &trans     &trans     &trans    &none     &none
+                                       &trans        &trans  &trans                                                                 &trans  &trans     &trans
             >;
 
             sensor-bindings = <&rsr_scrl &rsr_trans>;
@@ -104,10 +114,10 @@
         raise_layer {
             display-name = "SYMBOL";
             bindings = <
-&kp TILDE  &kp EXCL  &kp AT  &kp HASH  &kp DLLR  &kp PRCNT                                &mmv MOVE_UP                     &kp CARET  &kp AMPS   &kp ASTRK  &kp LPAR  &kp RPAR  &trans
-&trans     &bt BT_CLR  &none   &none     &none     &none                    &mmv MOVE_LEFT  &mkp LCLK       &mmv MOVE_RIGHT  &none      &kp UNDER  &kp PLUS   &kp LBRC  &kp RBRC  &kp PIPE
-&trans     &none       &none   &none     &none     &none     &kp C_MUTE                    &mmv MOVE_DOWN                   &none      &none      &kp LT     &kp GT    &none     &trans
-                             &trans    &trans    &trans                                                                    &trans     &trans     &trans
+&kp TILDE  &kp EXCL    &kp AT  &kp HASH  &kp DLLR  &kp PRCNT                            &mmv MOVE_UP                     &kp CARET  &kp AMPS   &kp ASTRK  &kp LPAR  &kp RPAR  &trans
+&trans     &bt BT_CLR  &none   &none     &none     &none                &mmv MOVE_LEFT  &mkp LCLK       &mmv MOVE_RIGHT  &none      &kp UNDER  &kp PLUS   &kp LBRC  &kp RBRC  &kp PIPE
+&trans     &none       &none   &none     &none     &none      &trans                    &mmv MOVE_DOWN                   &none      &none      &kp LT     &kp GT    &none     &trans
+                               &trans    &trans    &trans                                                                &trans     &trans     &trans
             >;
 
             sensor-bindings = <&rsr_scrl &rsr_trans>;
@@ -116,10 +126,10 @@
         adjust_layer {
             display-name = "ADJUST";
             bindings = <
-&trans  &none      &none     &none     &none   &none                                &mmv MOVE_UP                     &none     &none     &none   &none      &none  &kp DEL
-&none   &kp LCTRL  &kp LGUI  &kp LALT  &none   &none                 &mmv MOVE_LEFT  &mkp LCLK       &mmv MOVE_RIGHT  &kp LEFT  &kp DOWN  &kp UP  &kp RIGHT  &none  &none
-&trans  &none      &none     &none     &none   &none   &kp C_MUTE                   &mmv MOVE_DOWN                   &none     &none     &none   &none      &none  &none
-                             &trans    &trans  &trans                                                                 &trans    &trans    &trans
+&trans  &none      &none     &none     &none   &none                             &mmv MOVE_UP                     &none     &none     &none   &none      &none  &kp DEL
+&none   &kp LCTRL  &kp LGUI  &kp LALT  &none   &none             &mmv MOVE_LEFT  &mkp LCLK       &mmv MOVE_RIGHT  &kp LEFT  &kp DOWN  &kp UP  &kp RIGHT  &none  &none
+&trans  &none      &none     &none     &none   &none   &trans                    &mmv MOVE_DOWN                   &none     &none     &none   &none      &none  &none
+                             &trans    &trans  &trans                                                             &trans    &trans    &trans
             >;
 
             sensor-bindings = <&rsr_scrl &rsr_trans>;
@@ -128,10 +138,10 @@
         mouse_layer {
             display-name = "MOUSE";
             bindings = <
-&trans  &trans  &trans  &msc SCRL_DOWN  &msc SCRL_UP  &trans                                  &mmv MOVE_UP                     &trans          &trans          &trans         &trans           &trans  &trans
-&trans  &trans  &trans  &mkp RCLK       &mkp LCLK     &mkp MCLK                &mmv MOVE_LEFT  &mkp LCLK       &mmv MOVE_RIGHT  &mmv MOVE_LEFT  &mmv MOVE_DOWN  &mmv MOVE_UP   &mmv MOVE_RIGHT  &trans  &trans
-&trans  &trans  &trans  &trans          &trans        &trans      &kp C_MUTE                   &mmv MOVE_DOWN                   &trans          &trans          &trans         &trans           &trans  &trans
-                        &trans          &trans        &trans                                                                     &trans          &trans          &trans
+&trans  &trans  &trans  &trans  &trans  &trans                            &mmv MOVE_UP                     &trans          &trans          &trans        &trans           &trans  &trans
+&trans  &trans  &trans  &trans  &trans  &trans            &mmv MOVE_LEFT  &mkp LCLK       &mmv MOVE_RIGHT  &mmv MOVE_LEFT  &mmv MOVE_DOWN  &mmv MOVE_UP  &mmv MOVE_RIGHT  &trans  &trans
+&trans  &trans  &trans  &trans  &trans  &trans  &trans                    &mmv MOVE_DOWN                   &trans          &trans          &trans        &trans           &trans  &trans
+                        &trans  &trans  &trans                                                             &trans          &trans          &trans
             >;
 
             sensor-bindings = <&rsr_scrl &rsr_trans>;
