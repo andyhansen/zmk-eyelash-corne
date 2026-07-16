@@ -87,9 +87,7 @@
                                                               &kp RCTRL             &mo 1              &kp SPACE                                                                      &lt 4 ENTER  &mo 2               &kp LGUI
             >;
 
-            sensor-bindings =
-                <&inc_dec_kp C_AC_SCROLL_UP C_AC_SCROLL_DOWN>,
-                <&rsr_trans>;
+            sensor-bindings = <&inc_dec_kp PAGE_UP PAGE_DOWN>, <&rsr_trans>;
         };
 
         lower_layer {
